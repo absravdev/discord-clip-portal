@@ -22,7 +22,7 @@
 <p align="center">
   <img src="docs/screenshot_web.png" width="45%" alt="Web" />
     <img src="docs/screenshot_email.png" width="47%" alt="Creator email notification" />
-  <img src="docs/screenshot_discord.png" width="45%" alt="Dsicord " />
+  <img src="docs/screenshot_discord.png" width="45%" alt="Discord" />
 </p>
 
 ## The problem
@@ -42,35 +42,42 @@ He does one thing: **react to a clip in his Discord.** That's the entire workflo
 - **✅ Approve**: the clip goes live on the site *and* gets queued to pull down to disk for the next video.
 - **🌐 Web only**: the clip goes live on the site for the community, but stays out of the editing batch.
 
-The moment he reacts, the clip is captured and it's on the web, instantly, no manual downloading. The bot reacts back so he can see at a glance what's been saved. He can change his mind at any time: approving a web-only clip promotes it, marking an approved one as web-only pulls it from the next batch.
+The moment he reacts, the clip is captured and it's on the web, instantly, no manual downloading. The bot also extracts a poster frame with ffmpeg at capture time, so the clip lands on the site with a real thumbnail, and it reacts back so he can see at a glance what's been saved. He can change his mind at any time: approving a web-only clip promotes it, marking an approved one as web-only pulls it from the next batch. The last emoji always wins.
 
 Then, when he's ready to edit, **one command pulls every newly-approved clip to a local folder, sorted by creator, filenames intact, ready to drop straight into the timeline.** Only the new ones, never re-downloading, and it never touches the public gallery. What used to be an evening of downloading is now a reaction and a single batch.
 
 ### For the community: a reason to come back
 
-The clips don't just disappear into an editor. They live on a **portal where subscribers log in with their Discord account** and browse everything that made the cut, each clip shown with the creator's real Discord avatar and name, grouped by the channel it came from. They can **like** clips and see **view counts**, and pull up **their own submissions** in one place.
+The clips don't just disappear into an editor. They live on a **portal where subscribers log in with their Discord account** and browse everything that made the cut, each clip shown with the creator's real Discord avatar and name, grouped by the channel it came from. They can **like** clips, drop **emoji reactions** from a fixed palette (🔥 😂 💀 🤯 🐐 👎, Discord style: tap to add, tap again to remove, validated server-side so with no free text there's nothing to moderate), see **view counts**, and pull up **their own submissions** in one place.
 
-And the loop closes with the creators: a fan who's saved their email gets an **automatic email the first time Jimmy picks their clip**, one message if it's live on the site, a different one if it's headed to YouTube. The person who sent the clip finds out it made it, in Jimmy's voice, without Jimmy lifting a finger. The portal also surfaces the channel's latest YouTube uploads, tying the community space back to the videos it feeds.
+**A reel that opens different every time.** The vertical feed's default mode takes the trending ranking and shuffles it in position space with a per-session seed: the good stuff stays near the top, but the opener rotates instead of always being the same number one. The browser also remembers which clips you've already watched (locally, anonymously, 30-day expiry) and the feed sinks those below everything you haven't seen, so coming back means seeing something new. Trending itself is a Hacker News style score, likes and views with time decay, and there are fresh and top-of-the-week tabs alongside it. Pagination is keyset with opaque cursors, so clips landing mid-scroll never cause duplicates or skips, and only the active clip and its neighbors ever hold a loaded video; everything else shows its poster.
 
-The reaction that saves a clip for editing is the same signal that surfaces it to everyone, so the workflow that makes Jimmy's videos doubles as a retention engine.
+**👑 Clip of the Week.** The race is public: a dedicated reel tab shows the live top five by likes earned since the last coronation, each with its rank and its week's like count. The system ranks the candidates; a human puts the crown. The winner gets a hero card above the wall, a gold badge whenever their clip opens the reel, a permanent crown counter on their profile, and a congratulation email if they saved their address. The reigning clip sits out the next race, because it opens every shared reel and its likes are inflated by exposure, though the same creator can win again with a different clip. Sponsored clips are never eligible. Crowning stamps the start of the next window automatically: no cron jobs, no weekly reset to remember.
+
+**Links that unfurl.** Every clip has its own share page, server-rendered with per-clip Open Graph meta: title, description, poster thumbnail and og:video, so a link dropped in Discord or WhatsApp shows a real preview instead of a gray box (Discord even plays the video inline). For a person, the same URL opens the reel pinned to that exact clip, no redirects. Sharing uses the native share sheet on mobile and a copy / X / Discord menu on desktop, and any clip can be downloaded with its original filename through a proxy that only ever serves objects from our own bucket.
+
+**Honest numbers for creators.** An anonymous analytics pipeline (no cookies, no PII, a random per-tab session id, batched through sendBeacon) tracks impressions, plays, watch depth by quartile, completions, loops and shares. Downloads are counted server-side, so nobody can inflate them from the client. Logged-in creators get a **"Your month"** panel on their profile: last-30-days plays, impressions, watch depth, completion rate, loops, shares, downloads, reactions received by emoji, and their most played clip.
+
+And the loop closes automatically: a fan who's saved their email gets a message **the first time Jimmy picks their clip**, one version if it's live on the site, a different one if it's headed to YouTube, and another when they win the crown. All in Jimmy's voice, without Jimmy lifting a finger. The portal also surfaces the channel's latest YouTube uploads, is **installable as a PWA**, and the reaction that saves a clip for editing is the same signal that surfaces it to everyone, so the workflow that makes Jimmy's videos doubles as a retention engine.
 
 ### For sponsors: native slots in the same feed
 
 The portal's reel is a TikTok-style vertical feed, and brands can buy space inside it. A sponsored clip enters through the exact same pipeline as everything else: post the brand's video in Discord with the campaign data written in the message (name, destination link, rotation weight), react **💰**, and it starts rotating through the feed, interleaved between community clips at a configurable cadence.
 
-- **Weighted rotation.** A brand that pays more gets a higher weight and proportionally more slots. Changing a weight is one live update, no redeploy.
-- **Transparent by design.** Every sponsored clip carries a visible "Sponsored" badge and a call-to-action link, TikTok/Instagram style. It never poses as a community member, never shows up in creator profiles or stats, and can't be liked, shared or downloaded.
-- **Campaign analytics.** Impressions, plays, watch depth, completions and CTA clicks are tracked per campaign, so a brand gets a real report — CTR included — instead of a screenshot and a promise.
+- **Weighted rotation.** A brand that pays more gets a higher weight and proportionally more slots. Editing the message and re-reacting 💰 updates the campaign live, no redeploy; reacting ✅ or 🌐 demotes it back to a regular community clip.
+- **Transparent by design.** Every sponsored clip carries a visible "Sponsored" badge and a call-to-action link, TikTok/Instagram style. It never poses as a community member, never shows up in creator profiles, stats or the Clip of the Week race, and can't be liked, shared or downloaded.
+- **Campaign analytics.** Impressions, plays, watch depth, completions and CTA clicks are tracked per campaign, so a brand gets a real report with CTR included, instead of a screenshot and a promise.
 
 ## Built with
 
 Nearly everything runs on free tiers at this scale; the bot's always-on host is the only paid line item.
 
-- **The web platform**: built from scratch, deployed from a GitHub repo through **Cloudflare Pages**, with the API layer running as serverless **Pages Functions** at the edge.
-- **Neon (Postgres)**: the single source of truth for clips, likes, views, and creator emails.
-- **Cloudflare R2**: object storage that serves the video. Zero egress fees, which is the whole reason a video product like this runs cheaply.
+- **The web platform**: built from scratch, deployed from a GitHub repo through **Cloudflare Pages**, with the API layer running as serverless **Pages Functions** at the edge. Anonymous traffic to the hot endpoints is edge-cached, so a viral share wave never touches the database.
+- **Neon (Postgres)**: the single source of truth for clips, likes, reactions, analytics events, crown history, and creator emails.
+- **Cloudflare R2**: object storage that serves the video and the poster frames. Zero egress fees, which is the whole reason a video product like this runs cheaply.
 - **Discord OAuth2**: subscribers log in with the identity they already use in the community. Built with the boring-but-correct hygiene: CSRF-state protection, signed sessions, minimal `identify` scope, no passwords to store.
-- **Resend**: the transactional emails to creators.
+- **Resend**: the transactional emails to creators, clip picked and crown won alike.
+- **ffmpeg**: poster frame extraction at capture time, with an idempotent backfill script for the back catalogue.
 - **The bot**: Node.js + discord.js, running 24/7 as an always-on worker on **Railway**. Owner-only reactions count, and it streams uploads straight through, so a 5 MB clip and a 500 MB clip are handled the same way. It's also fully generic now: site URL, branding and the approver list all come from environment variables, so standing it up for another creator is configuration, not a fork.
 
 ## Why there's no source here (and no wiring diagram)
@@ -79,21 +86,13 @@ Two reasons, and I'd rather be upfront about both.
 
 One: this is a live system running for a real creator's community, holding real user data and credentials. That code doesn't belong in public.
 
-Two: I'm deliberately not spelling out how the pieces connect. Not because it's a secret nobody could reverse-engineer, but because I know this pipeline end to end and can stand it up again, tailored, for a different creator. If that's something you want, it's a conversation worth having, not a diagram worth copying. You can see it running for real: the [site](https://jimmycruck.com/), the [portal](https://jimmycruck.com/clips), and the [Discord](https://discord.com/invite/zcAenGZ46G) where the bot lives. Reach me at the bottom.
-
-## Honest limitations
-
-Same as every repo of mine: here's what I'd flag reviewing this critically.
-
-- **Sponsorship ops are reaction-and-SQL, not a dashboard.** Campaigns are created with a Discord reaction and reported on with queries I run. Deliberate for a v1, but a brand can't self-serve anything yet.
-- **Moderation is Jimmy's reaction, and nothing more.** A human decides what enters, which is a cheap and decent gate, but there's no automated check and no report path for portal users. For fan-submitted video that's a real content and copyright surface I'd want to harden before this served anyone but one trusted community.
-- **Single-tenant.** Built for one creator. The bot is fully configurable through environment variables these days, but the web platform still assumes one brand rather than per-tenant config.
-- **Free-tier economics don't generalize.** They cover one creator at this volume comfortably. Storage and operations grow with the clip library, and a multi-creator version would leave those tiers quickly.
+Two: I'm deliberately not spelling out how the pieces connect. Not because it's a secret nobody could reverse-engineer, but because I know this pipeline end to end and can stand it up again, tailored, for a different creator. If that's something you want, it's a conversation worth having, not a diagram worth copying. You can see it running for real: the [site](https://jimmycruck.com/), the [portal](https://jimmycruck.com/clips), the [reel](https://jimmycruck.com/reel), and the [Discord](https://discord.com/invite/zcAenGZ46G) where the bot lives. Reach me at the bottom.
 
 ## What I'd do differently today
 
 - Design it multi-tenant from day one if it were ever going to be a product, instead of retrofitting it.
 - Add a proper moderation and report flow on the portal side.
+- Aggregate analytics into daily rollups instead of scanning the raw event log.
 - Formalize the boundaries between the moving parts so any one of them can change without touching the others.
 
 ## AI assistance
