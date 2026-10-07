@@ -9,7 +9,6 @@
 <div align="center">
 
 [![Website](https://img.shields.io/badge/Website-flockery.app-BB9AF7?style=for-the-badge&labelColor=1A1B26)](https://flockery.app/)
-[![Demo](https://img.shields.io/badge/Demo-demo.flockery.app-9ECE6A?style=for-the-badge&labelColor=1A1B26)](https://demo.flockery.app/)
 [![Live deployment](https://img.shields.io/badge/Live%20deployment-clip%20portal-7AA2F7?style=for-the-badge&labelColor=1A1B26)](https://jimmycruck.com/clips)
 
 </div>
@@ -102,7 +101,7 @@ Two reasons, and I'd rather be upfront about both.
 
 One: this is a commercial product running live communities, holding real user data and credentials. That code doesn't belong in public.
 
-Two: I'm deliberately not spelling out how the pieces connect. Not because it's a secret nobody could reverse-engineer, but because I know this pipeline end to end and standing it up for a new community is the product itself. You can see it running for real: the [website](https://flockery.app/), the [public demo](https://demo.flockery.app/), and a [live deployment](https://jimmycruck.com/clips) serving a ~250K-subscriber community. Reach me at the bottom.
+Two: I'm deliberately not spelling out how the pieces connect. Not because it's a secret nobody could reverse-engineer, but because I know this pipeline end to end and standing it up for a new community is the product itself. You can see it running for real: the [website](https://flockery.app/) and a [live deployment](https://jimmycruck.com/clips) serving a ~250K-subscriber community. Reach me at the bottom.
 
 ## What I'd still do differently
 
