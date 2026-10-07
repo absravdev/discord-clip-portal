@@ -27,7 +27,7 @@
 
 Some creators build entire videos out of clips their community posts in Discord. Getting those clips out used to be fully manual: scroll the server, open each message, download each video one by one, rename them, sort them by who sent what. Hours per video, before editing even starts. The content was already there. The workflow to collect it was the bottleneck.
 
-I didn't want to hand anyone a download script. I built the whole thing for one creator first — the site from scratch, its backend, its storage, the login, and the Discord bot that feeds it — and then did the harder part: turned it into a product any creator can run, without forking a single line. The part I'm proud of isn't any single feature. It's that I own every layer end to end, and that the same layers now serve multiple communities from one codebase.
+I didn't want to hand anyone a download script. I built the whole thing for one creator first (the site from scratch, its backend, its storage, the login, and the Discord bot that feeds it), and then did the harder part: turned it into a product any creator can run, without forking a single line. The part I'm proud of isn't any single feature. It's that I own every layer end to end, and that the same layers now serve multiple communities from one codebase.
 
 ## What it does
 
@@ -40,11 +40,11 @@ They do one thing: **react to a clip in their Discord.** That's the entire workf
 - **Approve**: the clip goes live on the site *and* gets queued to pull down to disk for the next video.
 - **Web only**: the clip goes live on the site for the community, but stays out of the editing batch.
 
-The moment they react, the clip is captured and it's on the web, instantly, no manual downloading. The bot extracts a poster frame with ffmpeg at capture time, so the clip lands on the site with a real thumbnail, and it reacts back so the creator can see at a glance what's been saved. They can change their mind at any time: the last emoji always wins. Which emojis do what, whether the bot confirms, and who counts as an approver are all **per-deployment configuration, editable from the panel** — not code.
+The moment they react, the clip is captured and it's on the web, instantly, no manual downloading. The bot extracts a poster frame with ffmpeg at capture time, so the clip lands on the site with a real thumbnail, and it reacts back so the creator can see at a glance what's been saved. They can change their mind at any time: the last emoji always wins. Which emojis do what, whether the bot confirms, and who counts as an approver are all **per-deployment configuration, editable from the panel**, not code.
 
 Then, when they're ready to edit, **one command pulls every newly-approved clip to a local folder, sorted by creator, filenames intact, ready to drop straight into the timeline.** Only the new ones, never re-downloading, and it never touches the public gallery.
 
-**And there's a creator panel** (React) where they run the rest without touching code: branding and theme (colors, fonts, wordmark, copy), which channels get a tab on the wall, module toggles, stats dashboards, clip moderation with reversible soft-delete, transactional email templates, and audience newsletters with granular unsubscribe. Every save is validated server-side against an allowlist, written with compare-and-set (concurrent edits get a clean 409, never a silent overwrite), and followed by a targeted edge-cache purge — a change is visible on the public site in seconds.
+**And there's a creator panel** (React) where they run the rest without touching code: branding and theme (colors, fonts, wordmark, copy), which channels get a tab on the wall, module toggles, stats dashboards, clip moderation with reversible soft-delete, transactional email templates, and audience newsletters with granular unsubscribe. Every save is validated server-side against an allowlist, written with compare-and-set (concurrent edits get a clean 409, never a silent overwrite), and followed by a targeted edge-cache purge, so a change is visible on the public site in seconds.
 
 ### For the community: a reason to come back
 
@@ -52,17 +52,17 @@ The clips don't just disappear into an editor. They live on a **portal where fan
 
 **A reel that opens different every time.** The vertical feed's default mode takes the trending ranking and shuffles it in position space with a per-session seed: the good stuff stays near the top, but the opener rotates instead of always being the same number one. The browser also remembers which clips you've already watched (locally, anonymously, 30-day expiry) and the feed sinks those below everything you haven't seen. Trending itself is a Hacker News style score, likes and views with time decay, with fresh and top-of-the-week tabs alongside it. Pagination is keyset with opaque cursors, so clips landing mid-scroll never cause duplicates or skips, and only the active clip and its neighbors ever hold a loaded video.
 
-**Participation modules, switchable per client.** Beyond the feed, communities get competitive mechanics — each one a module the platform can turn on per deployment:
+**Participation modules, switchable per client.** Beyond the feed, communities get competitive mechanics, each one a module the platform can turn on per deployment:
 
-- **👑 Clip of the Week**: a public race by likes since the last coronation; the system ranks the candidates, a human puts the crown from the panel. The winner gets a hero card, a gold badge, a permanent crown counter and a congratulation email. The reigning clip sits out the next race; crowning stamps the next window automatically — no cron jobs.
-- **🏆 Contests**: time-boxed events over a channel where fans rate clips 1–10 (one vote per fan per clip, structurally — it's the primary key), with a derived podium, frozen scores at close, and winner emails.
+- **👑 Clip of the Week**: a public race by likes since the last coronation; the system ranks the candidates, a human puts the crown from the panel. The winner gets a hero card, a gold badge, a permanent crown counter and a congratulation email. The reigning clip sits out the next race; crowning stamps the next window automatically, with no cron jobs.
+- **🏆 Contests**: time-boxed events over a channel where fans rate clips 1–10 (one vote per fan per clip, enforced by the primary key), with a derived podium, frozen scores at close, and winner emails.
 - **🎯 Bounties**: challenges with a prize ("best clip of X wins Y") where attempts are derived from the same capture pipeline and the creator picks the winner from the panel.
 
 **Links that unfurl.** Every clip has its own share page, server-rendered with per-clip Open Graph meta: title, description, poster thumbnail and og:video, so a link dropped in Discord or WhatsApp shows a real preview instead of a gray box. For a person, the same URL opens the reel pinned to that exact clip. Any clip can be downloaded with its original filename through a proxy that only ever serves objects from the deployment's own bucket.
 
 **Honest numbers for creators.** An anonymous analytics pipeline (no cookies, no PII, a random per-tab session id, batched through sendBeacon) tracks impressions, plays, watch depth by quartile, completions, loops and shares. Downloads are counted server-side, so nobody can inflate them from the client. Logged-in fans get a profile with their history; the creator gets aggregate dashboards in the panel.
 
-And the loop closes automatically: a fan who saved their email gets a message the first time the creator picks their clip, another when they make a podium, another when they win the crown — all in the creator's voice (the copy is a template they can edit from the panel), without the creator lifting a finger. The portal is **installable as a PWA**, and the reaction that saves a clip for editing is the same signal that surfaces it to everyone, so the workflow that makes the videos doubles as a retention engine.
+And the loop closes automatically: a fan who saved their email gets a message the first time the creator picks their clip, another when they make a podium, another when they win the crown. All of it in the creator's voice (the copy is a template they can edit from the panel), without the creator lifting a finger. The portal is **installable as a PWA**, and the reaction that saves a clip for editing is the same signal that surfaces it to everyone, so the workflow that makes the videos doubles as a retention engine.
 
 ### For sponsors: native slots in the same feed
 
@@ -74,12 +74,12 @@ The reel is a TikTok-style vertical feed, and brands can buy space inside it. A 
 
 ## The multi-tenant retrofit
 
-The technically interesting part is what happened when a one-off became a product — without forking, and without downtime for the community already using it:
+The technically interesting part is what happened when a one-off became a product, without forking and without downtime for the community already using it:
 
-- **One configuration table per deployment** is the heart of the model: branding, copy, theme, channels, module state, bot behavior. The public site's HTML is intercepted at the edge by a middleware that renders **neutral templates from the repo** filled from that table — the failure mode is neutrality, never another client's brand — and zero client identity ships in the browser JS or the repo.
+- **One configuration table per deployment** is the heart of the model: branding, copy, theme, channels, module state, bot behavior. The public site's HTML is intercepted at the edge by a middleware that renders **neutral templates from the repo** filled from that table. The failure mode is neutrality, never another client's brand, and zero client identity ships in the browser JS or the repo.
 - **A module system with two owners**: platform flags (what tier a client bought) × creator tunables (how the module behaves), composed into a single signal server-side. Turning a module off turns its surfaces off but keeps its data intact.
 - **The bot reads the same table** (60-second TTL, best-effort: the database being down never stops capture), so approval emojis, confirmations and the approver list propagate to a resident process without redeploys.
-- **Secrets never live in that table** — credentials stay in per-service env vars with minimal scopes; the config API serves a public view through an allowlist.
+- **Secrets never live in that table**: credentials stay in per-service env vars with minimal scopes; the config API serves a public view through an allowlist.
 - **Onboarding a new community is configuration, not code**: a bootstrap schema, a seed, and a set of managed accounts. Deployment #2 went live from scratch on the same commit as deployment #1, verified end to end the same day.
 
 ## Built with
@@ -107,7 +107,7 @@ Two: I'm deliberately not spelling out how the pieces connect. Not because it's 
 
 - Aggregate analytics into daily rollups instead of scanning the raw event log (thresholds are written down; the data hasn't earned it yet).
 - Self-service asset uploads for the creator panel, so theme images stop being an operator step.
-- Automate more of the onboarding playbook — today it's a documented manual runbook, deliberately, until the third deployment tells me which steps are worth the tooling.
+- Automate more of the onboarding playbook. Today it's a documented manual runbook, on purpose, until the third deployment tells me which steps are worth the tooling.
 
 ## AI assistance
 
